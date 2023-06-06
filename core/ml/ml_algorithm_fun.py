@@ -16,8 +16,8 @@ def train_and_evaluate_model(data_clean):
     data_clean[cols_object] = data_clean[cols_object].apply(lambda col: label_encoder.fit_transform(col.astype(str)))
 
     # Separar os dados em features (X) e rótulo (y)
-    X = data_clean.drop(['job_title'], axis=1)
-    y = data_clean['job_title']
+    X = data_clean.drop(['salary'], axis=1)
+    y = data_clean['salary']
 
     # Dividir os dados em conjunto de treinamento e teste
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
