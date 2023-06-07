@@ -1,3 +1,4 @@
+import os
 import numpy as np
 import pandas as pd
 from keras.models import Sequential
@@ -45,21 +46,47 @@ def train_and_evaluate_model(data_clean):
     accuracy = accuracy_score(y_test, y_pred)
     print("Acurácia:", accuracy)
 
+
+    # Antes de carregar o conjunto de dados
+
+    # Criar a pasta 'media' se não existir
+    if not os.path.exists('media'):
+        os.makedirs('media')
+
+
+    pasta = './media' 
+
+    # Verificar se a pasta existe
+    if os.path.exists(pasta):
+        # Obter a lista de arquivos na pasta
+        arquivos = os.listdir(pasta)
+        
+        # Excluir cada arquivo de imagem na lista
+        for arquivo in arquivos:
+            if arquivo.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.bmp')):
+                caminho_arquivo = os.path.join(pasta, arquivo)
+                os.remove(caminho_arquivo)
+        
+        print("Todos os arquivos de imagem foram excluídos da pasta.")
+    else:
+        print("A pasta especificada não existe.")
+
+
+
+    # Dentro da função train_and_evaluate_model(), antes de chamar plt.show()
     # Plotar gráfico da acurácia ao longo das épocas
     plt.plot(history.history['accuracy'])
     plt.title('Acurácia do Modelo')
     plt.xlabel('Época')
     plt.ylabel('Acurácia')
-    plt.show()
-
+    plt.savefig(os.path.join('media', 'acuracia.png'))
 
     # Plotar gráfico da perda ao longo das épocas
     plt.plot(history.history['loss'])
     plt.title('Curva de Aprendizado')
     plt.xlabel('Época')
     plt.ylabel('Perda')
-    plt.show()
-
+    plt.savefig(os.path.join('media', 'curva_aprendizado.png'))
 
     # Acessar os pesos da primeira camada oculta
     weights = model.layers[0].get_weights()[0]
@@ -69,8 +96,7 @@ def train_and_evaluate_model(data_clean):
     plt.title('Distribuição dos Pesos')
     plt.xlabel('Pesos')
     plt.ylabel('Frequencia')
-    plt.show()
-
+    plt.savefig(os.path.join('media', 'distribuicao_pesos.png'))
 
     # Plotar a superfície de decisão (apenas para conjuntos de dados com duas features)
     if X_train_scaled.shape[1] == 2:
@@ -85,7 +111,8 @@ def train_and_evaluate_model(data_clean):
         plt.xlabel('Feature 1')
         plt.ylabel('Feature 2')
         plt.title('Superfície de Decisão')
-        plt.show()
+        plt.savefig(os.path.join('media', 'superficie_decisao.png'))
+
 
 # Carregar o conjunto de dados
 base_dados = pd.read_csv("core/ml/ds_salaries.csv")
@@ -97,5 +124,7 @@ data_clean = base_dados.drop(base_dados[base_dados['salary_currency'] != 'USD'].
 print("Dataset: {} linhas | {} colunas".format(data_clean.shape[0], data_clean.shape[1]))
 
 # Chamar a função para treinar e avaliar o modelo
-train_and_evaluate_model(data_clean)
+#train_and_evaluate_model(data_clean)
 
+if __name__ == '__main__':
+    train_and_evaluate_model(data_clean)
